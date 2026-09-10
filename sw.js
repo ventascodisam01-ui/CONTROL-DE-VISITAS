@@ -19,7 +19,9 @@ self.addEventListener("activate", function (e) {
 self.addEventListener("fetch", function (e) {
   if (e.request.method !== "GET") return; // los POST al backend se dejan pasar sin intervenir
   e.respondWith(
-    caches.match(e.request).then(function (resp) {
+    // ignoreSearch: true -> ignora lo que viene después del "?" (id, t) al buscar en caché,
+    // así cualquier QR (con cualquier id/token) encuentra la misma app.html ya guardada.
+    caches.match(e.request, { ignoreSearch: true }).then(function (resp) {
       return resp || fetch(e.request);
     })
   );
