@@ -21,7 +21,7 @@
 <h2 id="titulo">Registrar visita</h2>
 <p class="sub" id="subtitulo">Cargando punto...</p>
 
-<input id="vendedor" placeholder="Su nombre">
+<input id="codigo" placeholder="Código de vendedor">
 <input id="foto" type="file" accept="image/*" capture="environment">
 <button type="button" onclick="quitarFoto()" style="background:transparent;color:#B23A2E;border:1px solid #B23A2E;">Quitar foto</button>
 <button onclick="enviar()">Confirmar visita</button>
@@ -41,8 +41,8 @@ var token = params.get('t') || '';
 
 document.getElementById('subtitulo').textContent = idPunto ? ("Punto: " + idPunto) : "Código QR sin identificar";
 
-var vendedorGuardado = localStorage.getItem('cv_vendedor');
-if (vendedorGuardado) document.getElementById('vendedor').value = vendedorGuardado;
+var codigoGuardado = localStorage.getItem('cv_codigo');
+if (codigoGuardado) document.getElementById('codigo').value = codigoGuardado;
 
 // Se pide la ubicación apenas se abre la pantalla, pero ahora el envío
 // realmente ESPERA esta respuesta (hasta 8 segundos) en vez de tomar lo que
@@ -89,8 +89,8 @@ function enviarAlBackend(payload) {
 }
 
 function enviar() {
-  var vendedor = document.getElementById('vendedor').value;
-  localStorage.setItem('cv_vendedor', vendedor);
+  var codigo = document.getElementById('codigo').value;
+  localStorage.setItem('cv_codigo', codigo);
   var fotoInput = document.getElementById('foto').files[0];
   var msg = document.getElementById('msg');
   msg.style.color = '#1E2A32';
@@ -99,7 +99,7 @@ function enviar() {
   geoPromise.then(function (coords) {
   msg.textContent = 'Enviando...';
   return (fotoInput ? toBase64(fotoInput) : Promise.resolve('')).then(function (b64) {
-    var payload = { id: idPunto, t: token, vendedor: vendedor, lat: coords.lat, lon: coords.lon, foto: b64 };
+    var payload = { id: idPunto, t: token, codigo: codigo, lat: coords.lat, lon: coords.lon, foto: b64 };
     return enviarAlBackend(payload).then(function (d) {
       msg.style.color = d.ok ? '#2e7d32' : '#c62828';
       msg.textContent = d.mensaje;
